@@ -1,0 +1,13 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "Football Analysis Project - Building a front-end",
+  "main": "index.js",
+  "author": "Thomas BAZZUCCHI",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "d3": "^4.12.2",
+    "jquery": "^3.2.1"
+  }
+}

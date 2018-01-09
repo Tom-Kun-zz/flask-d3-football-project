@@ -1,0 +1,94 @@
+#goals {
+  padding: 10px;
+  text-align: center;
+}
+
+#results {
+  text-align: center;
+}
+
+#results table {
+  margin: 20px auto;
+}
+
+td, th {
+  padding: 6px 30px;
+}
+
+th {
+  font-size: 16px;
+  margin: 5px;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    margin: 20px auto;
+}
+
+.toolTip {
+    position: absolute;
+    display: none;
+    width: auto;
+    height: auto;
+    background: none repeat scroll 0 0 white;
+    border: 0 none;
+    border-radius: 8px 8px 8px 8px;
+    box-shadow: -3px 3px 15px #888888;
+    color: black;
+    font: 12px sans-serif;
+    padding: 5px;
+    text-align: center;
+}
+
+.legend {
+    font-size: 80%;
+}
+
+rect {
+    stroke-width: 2;
+}
+
+text {
+  font: 15px sans-serif;
+}
+
+.axis text {
+  font: 15px sans-serif;
+}
+
+.axis path{
+  fill: none;
+  stroke: #000;
+}
+
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis .tick line {
+  stroke-width: 1;
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+.axisHorizontal path{
+  fill: none;
+}
+
+.axisHorizontal line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axisHorizontal .tick line {
+  stroke-width: 1;
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}

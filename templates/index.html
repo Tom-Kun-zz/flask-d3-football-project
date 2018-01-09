@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+    	<title>Flask Stock Visualizer</title>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link href={{ url_for('static', filename='./resources/bootstrap/dist/css/bootstrap.min.css') }} rel="stylesheet" media="screen">
+    	<link href={{ url_for('static', filename='./css/custom.css') }} rel="stylesheet" media="screen">
+  	</head>
+  	<body>
+    	<div class="container">
+  			<div id="results">
+  				<h2>Premier League Season 2016-2017</h2>
+  			</div>
+    		<div id="goals">
+          <h2>Goals scored at Home vs Away</h2>  
+        </div>
+        <div id="predict">
+            <form class="match" action="/send_teams" method="post" role="form">
+              <h2>Match to predict</h2>
+              <input type="text" id="home_team" name="home_team" class="form-control" placeholder="Home Team">
+              <input type="text" id="away_team" name="away_team" class="form-control" placeholder="Away Team">
+              <button class="btn btn-lg btn-primary btn-block" type="button">Predict</button>
+            </form>
+        </div>
+    	</div>
+    	<script src={{ url_for('static', filename='./resources/jquery/dist/jquery.min.js') }}></script>
+    	<script src={{ url_for('static', filename='./resources/bootstrap/dist/js/bootstrap.min.js') }}></script>
+    	<script src={{ url_for('static', filename='./resources/d3/build/d3.min.js') }}></script>
+    	<script src={{ url_for('static', filename='./js/main.js') }}></script>
+  	</body>
+</html>
