@@ -1,9 +1,13 @@
 import pandas as pd
+import numpy as np
 import json
 
 import sys
 sys.path.append('lib/statsmodels')
 import statsmodels
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from scipy.stats import poisson
 
 # importing the tools required for the Poisson regression model
 #import statsmodels.api as sm
@@ -56,17 +60,26 @@ def get_goals():
 
 	return json
 
-def get_prediction():
+def get_prediction(homeTeam, awayTeam, max_goals=10):
 	data = get_data()
+	data = data[['HomeTeam','AwayTeam','FTHG','FTAG']]
+	data = data.rename(columns={'FTHG': 'HomeGoals', 'FTAG': 'AwayGoals'})
 	goal_model_data = pd.concat([data[['HomeTeam','AwayTeam','HomeGoals']].assign(home=1).rename(columns={'HomeTeam':'team', 'AwayTeam':'opponent','HomeGoals':'goals'}),
     data[['AwayTeam','HomeTeam','AwayGoals']].assign(home=0).rename(columns={'AwayTeam':'team', 'HomeTeam':'opponent','AwayGoals':'goals'})])
 	poisson_model = smf.glm(formula="goals ~ home + team + opponent", data=goal_model_data, family=sm.families.Poisson())
 	poisson_results = poisson_model.fit()
-	return poisson_results
 
-def simulate_match(foot_model, homeTeam, awayTeam, max_goals=10):
-    home_goals_avg = foot_model.predict(pd.DataFrame(data={'team': homeTeam, 'opponent': awayTeam,'home':1}, index=[1]))[0]
-    away_goals_avg = foot_model.predict(pd.DataFrame(data={'team': awayTeam, 'opponent': homeTeam,'home':0}, index=[1]))[0]
-    team_prediction = [[poisson.pmf(i, team_avg) for i in range(0, max_goals+1)] for team_avg in [home_goals_avg, away_goals_avg]]
-    prediction = np.outer(np.array(team_prediction[0]), np.array(team_prediction[1]))
-    return prediction
+	home_goals_avg = poisson_results.predict(pd.DataFrame(data={'team': homeTeam, 
+                                                            'opponent': awayTeam,'home':1},
+                                                      index=[1])).iloc[0]
+	away_goals_avg = poisson_results.predict(pd.DataFrame(data={'team': awayTeam, 
+                                                            'opponent': homeTeam,'home':0},
+                                                      index=[1])).iloc[0]
+	team_prediction = [[poisson.pmf(i, team_avg) for i in range(0, max_goals+1)] for team_avg in [home_goals_avg, away_goals_avg]]
+	result = np.outer(np.array(team_prediction[0]), np.array(team_prediction[1]))
+	home_team_win = np.sum(np.tril(result, -1))
+	away_team_win = np.sum(np.triu(result, 1))
+	draw = np.sum(np.diag(result))
+	df = pd.DataFrame({'HomeTeamWin': home_team_win, 'AwayTeamWin': away_team_win, 'Draw': draw}, index=[1])
+	prediction = df.to_json(orient='records')
+	return prediction

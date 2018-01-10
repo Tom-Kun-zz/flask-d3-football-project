@@ -5,11 +5,47 @@ $(function() {
         var away = $('#away_team').val();
         $.ajax({
             url: '/send_teams',
+            dataType: "json",
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {
-                console.log(response);
-            },
+				response.forEach(function(d) {
+					function proba_table(data, columns) {
+						var div = d3.select('#proba')
+						var table = div.append('table')
+						var thead = table.append('thead')
+						var tbody = table.append('tbody');
+
+						div.style("display", "block");
+
+						//append the header
+						thead.append('tr')
+							.selectAll('th')
+							.data(columns).enter()
+							.append('th')
+								.text(function (column) { return column; });
+
+						// create a row for each json object in the data
+						var rows = tbody.selectAll('tr')
+							.data(data)
+							.enter()
+							.append('tr');
+
+						var cells = rows.selectAll('td')
+							.data(function (row) {
+								return columns.map(function (column) {
+									return { column: column, value: row[column]};
+								});
+							})
+							.enter()
+							.append('td')
+								.text(function (d) { return d.value + '%'; });
+						return proba
+			    	}
+			    	proba_table(response, ['HomeTeamWin', 'AwayTeamWin', 'Draw'])
+
+			   	});
+			},
             error: function(error) {
                 console.log(error);
             }
@@ -17,7 +53,6 @@ $(function() {
     });
 	loadData();
 	createGraph();
-	predictMatch();
 });
 
 function loadData() {
@@ -179,15 +214,5 @@ function createGraph() {
 	    	.attr("dy", ".35em")
 	    	.style("text-anchor", "end")
 	    	.text(function(d) { return d; });
-	});
-}
-
-function predictMatch() {
-	d3.json("/send_teams", function(error, data) {
-		data.forEach(function(d) {
-	    	d.home_team = +d.home_team;
-	    	d.away_team = +d.away_team;
-	    });
-	    console.log(data[0]);	
 	});
 }
