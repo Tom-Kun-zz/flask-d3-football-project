@@ -16,9 +16,19 @@ div {
   width: 58%
 }
 
-#proba table {
-  padding: 10px;
-  margin-top: 40px
+.error {
+  text-align: left;
+  color: red;
+  display: none;
+  margin: 30px 20px 0 20px;
+}
+
+.match {
+  margin-top: 40px;
+}
+
+#proba h4 {
+  font-size: 20px;
 }
 
 #proba th {
@@ -35,10 +45,10 @@ div {
 #teams form {
   width: 90%;
   text-align: center;
-  padding: 20px;
+  padding-bottom: 20px;
 }
 
-input, button {
+select, button {
   margin: 15px;
 }
 

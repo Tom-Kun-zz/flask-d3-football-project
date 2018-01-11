@@ -3,57 +3,100 @@ $(function() {
     $('button').click(function() {
         var home = $('#home_team').val();
         var away = $('#away_team').val();
-        $.ajax({
-            url: '/send_teams',
-            dataType: "json",
-            data: $('form').serialize(),
-            type: 'POST',
-            success: function(response) {
-				response.forEach(function(d) {
-					function proba_table(data, columns) {
-						var div = d3.select('#proba')
-						var table = div.append('table')
-						var thead = table.append('thead')
-						var tbody = table.append('tbody');
+        if((home == '') || (away == '')) {
+        	var error = d3.select('.error')
+        		.style("display", "block")
+        		.text('You must pick two teams!');
+        } else if(home == away) {
+        	var error = d3.select('.error')
+        		.style("display", "block")
+        		.text('You cannot pick the same teams!');
+        } else {
+	        $.ajax({
+	            url: '/send_teams',
+	            dataType: "json",
+	            data: $('form').serialize(),
+	            type: 'POST',
+	            success: function(response) {
+					response.forEach(function(d) {
+						function proba_table(data, columns) {
+							// hide the error
+							var error = d3.select('.error')
+							.style("display", "none");
 
-						div.style("display", "block");
+							// add title of the match
+							var div = d3.select('#proba')
+								div.append('div')
+								.attr('class', "match")
+								.append('h4')
+								.text(home + ' vs ' + away);
 
-						//append the header
-						thead.append('tr')
-							.selectAll('th')
-							.data(columns).enter()
-							.append('th')
-								.text(function (column) { return column; });
+							// add table properties
+							var table = div.append('table')
+							var thead = table.append('thead')
+							var tbody = table.append('tbody');
 
-						// create a row for each json object in the data
-						var rows = tbody.selectAll('tr')
-							.data(data)
-							.enter()
-							.append('tr');
+							// show results
+							div.style("display", "block");
 
-						var cells = rows.selectAll('td')
-							.data(function (row) {
-								return columns.map(function (column) {
-									return { column: column, value: row[column]};
-								});
-							})
-							.enter()
-							.append('td')
-								.text(function (d) { return d.value + '%'; });
-						return proba
-			    	}
-			    	proba_table(response, ['HomeTeamWin', 'AwayTeamWin', 'Draw'])
+							//append the header
+							thead.append('tr')
+								.selectAll('th')
+								.data(columns).enter()
+								.append('th')
+									.text(function (column) { return column; });
 
-			   	});
-			},
-            error: function(error) {
-                console.log(error);
-            }
-        });
+							// create a row for each json object in the data
+							var rows = tbody.selectAll('tr')
+								.data(data)
+								.enter()
+								.append('tr');
+
+							var cells = rows.selectAll('td')
+								.data(function (row) {
+									return columns.map(function (column) {
+										return { column: column, value: row[column]};
+									});
+								})
+								.enter()
+								.append('td')
+									.text(function (d) { return Math.round(d.value * 10000)/100 + ' %'; });
+							return proba
+				    	}
+				    	proba_table(response, ['HomeTeamWin', 'AwayTeamWin', 'Draw'])
+
+				   	});
+				},
+	            error: function(error) {
+	                console.log(error);
+	            }
+	        });
+    	}
     });
+    loadTeams();
 	loadData();
 	createGraph();
 });
+
+function loadTeams() {
+	d3.json("/data", function(error, data) {
+		d3.select("#home_team")
+	        .selectAll("option")
+	        .data(data)
+	        .enter()
+	        .append("option")
+	        .attr("value", function(option) { return option.HomeTeam; })
+	        .text(function(option) { return option.HomeTeam; });
+
+		d3.select("#away_team")
+	        .selectAll("option")
+	        .data(data)
+	        .enter()
+	        .append("option")
+	        .attr("value", function(option) { return option.AwayTeam; })
+	        .text(function(option) { return option.AwayTeam; });
+	});
+}
 
 function loadData() {
 	d3.json("/data", function(error, data) {

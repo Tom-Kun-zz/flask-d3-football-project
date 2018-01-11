@@ -17,9 +17,10 @@
         <div id="predict">
           <div id="teams">
             <h2>Match to predict</h2>
-            <form class="match" action="/send_teams" method="post" role="form">
-              <input type="text" id="home_team" name="home_team" class="form-control" placeholder="Home Team">
-              <input type="text" id="away_team" name="away_team" class="form-control" placeholder="Away Team">
+            <h5 class="error"></h5>
+            <form action="/send_teams" method="post" role="form">
+              <select id="home_team" name="home_team" class="form-control"><option value="">Select the Home Team</option></select>
+              <select id="away_team" name="away_team" class="form-control"><option value="">Select the Away Team</option></select>
               <button class="btn btn-lg btn-primary btn-block" type="button">Predict</button>
             </form>
           </div>
